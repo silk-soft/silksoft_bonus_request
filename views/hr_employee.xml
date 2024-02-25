@@ -1,0 +1,70 @@
+<odoo>
+    <record id="silksoft_hr_employee_inherit" model="ir.ui.view">
+        <field name="name">silksoft.hr.employee.form.inherit</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='hr_settings']" position="after">
+                <page name="hr_bonus" string="Bonus" groups="hr.group_hr_user">
+                    <group string="Bonus">
+                        <field name="line_ids"
+                                   mode="tree,kanban">
+                                <tree editable="bottom" string="Bonus Requests" default_order="date asc, id">
+                                    <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                                    <field name="rate" force_save="1"/>
+                                    <field name="amount" force_save="1"/>
+                                    <field name="state"/>
+                                    <button string="Submit" name="action_submit" type="object"
+                                        icon="fa-check"
+                                        states="draft"/>
+                                    <button string="Approve" name="action_approve" type="object"
+                                        icon="fa-thumbs-up"
+                                        states="waiting_approval"
+                                        groups="hr_holidays.group_hr_holidays_manager"/>
+                                    <button string="Refuse" name="action_refuse" type="object"
+                                        icon="fa-times"
+                                        states="waiting_approval"
+                                        groups="hr_holidays.group_hr_holidays_manager"/>
+                                    <button string="Reset" name="action_reset" type="object"
+                                        icon="fa-refresh"
+                                        states="refuse"
+                                        groups="hr_holidays.group_hr_holidays_manager"/>
+                                </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+<!--  ToDo: Add user access  -->
+<!--    <record id="silksoft_res_users_inherit" model="ir.ui.view">-->
+<!--        <field name="name">silksoft.res_users.form.inherit</field>-->
+<!--        <field name="model">res.users</field>-->
+<!--        <field name="inherit_id" ref="hr.res_users_view_form_profile"/>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <xpath expr="//page[@name='hr_settings']" position="inside">-->
+<!--                <page name="hr_bonus" string="Bonus" groups="base.group_user">-->
+<!--                    <group string="Bonus">-->
+<!--                        <field name="line_ids"-->
+<!--                                   mode="tree,kanban">-->
+<!--                                <tree editable="bottom" string="Bonus Requests" default_order="date asc, id">-->
+<!--                                    <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
+<!--                                    <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
+<!--                                    <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
+<!--                                    <field name="rate" force_save="1"/>-->
+<!--                                    <field name="amount" force_save="1"/>-->
+<!--                                    <field name="state"/>-->
+<!--                                    <button string="Submit" name="action_submit" type="object"-->
+<!--                                        icon="fa-check"-->
+<!--                                        states="draft"/>-->
+<!--                                </tree>-->
+<!--                        </field>-->
+<!--                    </group>-->
+<!--                </page>-->
+<!--            </xpath>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>
