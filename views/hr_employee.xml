@@ -10,6 +10,7 @@
                         <field name="line_ids"
                                    mode="tree,kanban">
                                 <tree editable="bottom" string="Bonus Requests" default_order="date asc, id">
+                                    <field name="name" invisible="1" force_save="1"/>
                                     <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                     <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
                                     <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
@@ -39,32 +40,103 @@
         </field>
     </record>
 
-<!--  ToDo: Add user access  -->
-<!--    <record id="silksoft_res_users_inherit" model="ir.ui.view">-->
-<!--        <field name="name">silksoft.res_users.form.inherit</field>-->
-<!--        <field name="model">res.users</field>-->
-<!--        <field name="inherit_id" ref="hr.res_users_view_form_profile"/>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <xpath expr="//page[@name='hr_settings']" position="inside">-->
-<!--                <page name="hr_bonus" string="Bonus" groups="base.group_user">-->
-<!--                    <group string="Bonus">-->
-<!--                        <field name="line_ids"-->
-<!--                                   mode="tree,kanban">-->
-<!--                                <tree editable="bottom" string="Bonus Requests" default_order="date asc, id">-->
-<!--                                    <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
-<!--                                    <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
-<!--                                    <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>-->
-<!--                                    <field name="rate" force_save="1"/>-->
-<!--                                    <field name="amount" force_save="1"/>-->
-<!--                                    <field name="state"/>-->
-<!--                                    <button string="Submit" name="action_submit" type="object"-->
-<!--                                        icon="fa-check"-->
-<!--                                        states="draft"/>-->
-<!--                                </tree>-->
-<!--                        </field>-->
-<!--                    </group>-->
-<!--                </page>-->
-<!--            </xpath>-->
-<!--        </field>-->
-<!--    </record>-->
+    <record id="bonus_request_search_view" model="ir.ui.view">
+        <field name="name">bonus.request.search.view</field>
+        <field name="model">hr.bonus</field>
+        <field name="arch" type="xml">
+            <search string="Bonus Request">
+                <filter string="My Requests" name="myrequest" domain="[('employee_id.user_id.id', '=', uid)]" />
+                <filter string="Draft" name="draft_state" domain="[('state', '=', 'draft')]" />
+                <filter string="Pending" name="pending_state" domain="[('state', '=', 'waiting_approval')]" />
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <field name="name" invisible="1" force_save="1"/>
+                <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="employee_id" invisible="1"/>
+                <field name="rate" force_save="1"/>
+                <field name="amount" force_save="1"/>
+                <field name="state"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="bonus_request_tree_view" model="ir.ui.view">
+        <field name="name">bonus.request.tree.view</field>
+        <field name="model">hr.bonus</field>
+        <field name="arch" type="xml">
+            <tree string="Bonus Request">
+                <field name="name" invisible="1" force_save="1"/>
+                <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                <field name="rate" force_save="1"/>
+                <field name="amount" force_save="1"/>
+                <field name="state"/>
+                <button string="Submit" name="action_submit" type="object"
+                    icon="fa-check"
+                    states="draft"/>
+                <button string="Approve" name="action_approve" type="object"
+                    icon="fa-thumbs-up"
+                    states="waiting_approval"
+                    groups="hr_holidays.group_hr_holidays_manager"/>
+                <button string="Refuse" name="action_refuse" type="object"
+                    icon="fa-times"
+                    states="waiting_approval"
+                    groups="hr_holidays.group_hr_holidays_manager"/>
+                <button string="Reset" name="action_reset" type="object"
+                    icon="fa-refresh"
+                    states="refuse"
+                    groups="hr_holidays.group_hr_holidays_manager"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="bonus_request_form_view" model="ir.ui.view">
+        <field name="name">bonus.request.form.view</field>
+        <field name="model">hr.bonus</field>
+        <field name="arch" type="xml">
+            <form string="Bonus Request">
+                <header>
+                    <button string="Submit" name="action_submit" type="object" icon="fa-check" states="draft"/>
+                    <button string="Set to Draft" name="action_reset" type="object" icon="fa-refresh" states="refuse" groups="hr_holidays.group_hr_holidays_manager"/>
+                    <button string="Approve" name="action_approve" type="object" icon="fa-thumbs-up" states="waiting_approval" groups="hr_holidays.group_hr_holidays_manager"/>
+                    <button  string="Refuse" name="action_refuse" type="object" icon="fa-times" states="waiting_approval" groups="hr_holidays.group_hr_holidays_manager"/>
+                    <field name="state" widget="statusbar" states="waiting_approval,approve,refuse" statusbar_visible="waiting_approval"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name" force_save="1"/>
+                        <field name="description" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="date" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="num_hours" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                        <field name="employee_id" groups="hr_holidays.group_hr_holidays_manager"/>
+                        <field name="rate" force_save="1"/>
+                        <field name="amount" force_save="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" groups="base.group_user"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_view_bonus_request" model="ir.actions.act_window">
+        <field name="name">Bonus Request</field>
+        <field name="res_model">hr.bonus</field>
+        <field name="context">{'search_default_myrequest':1}</field>
+        <field name="view_mode">tree,form,search</field>
+    </record>
+
+    <menuitem
+        id="menu_br_root"
+        name="Request for Bonus"
+        groups="base.group_user"
+        parent="hr.menu_hr_root"
+        action="action_view_bonus_request"
+        sequence="20"/>
 </odoo>

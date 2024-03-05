@@ -15,6 +15,7 @@
                 'mail', 'account', "om_account_asset", "resource", "ss_modification_requests", "project", "sale"],
     'data': [
         'security/ir.model.access.csv',
+        'security/security.xml',
         'views/hr_employee.xml',
         'views/hr_contract.xml',
     ],
