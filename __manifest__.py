@@ -19,6 +19,7 @@
         'views/hr_employee.xml',
         'views/hr_contract.xml',
     ],
+    'images': ['static/description/icon.png'],
     'installable': True,
     'auto_install': False,
     'application': False,

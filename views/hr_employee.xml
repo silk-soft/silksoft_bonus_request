@@ -139,4 +139,11 @@
         parent="hr.menu_hr_root"
         action="action_view_bonus_request"
         sequence="20"/>
+    <menuitem
+        id="menu_br_timeoff"
+        name="Request for Bonus"
+        groups="base.group_user"
+        parent="hr_holidays.menu_hr_holidays_approvals"
+        action="action_view_bonus_request"
+        sequence="2"/>
 </odoo>
